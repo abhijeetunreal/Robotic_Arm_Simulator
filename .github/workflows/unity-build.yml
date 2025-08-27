@@ -18,8 +18,9 @@ jobs:
       - name: Get Unity Version
         id: get-unity-version
         run: |
-          version=$(grep m_EditorVersion ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
+          version=$(grep "^m_EditorVersion:" ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
           echo "version=$version" >> $GITHUB_OUTPUT
+
 
       - name: Build project
         uses: game-ci/unity-builder@v4
