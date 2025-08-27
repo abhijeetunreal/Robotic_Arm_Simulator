@@ -6,3 +6,7 @@
 [Ll]ogs/
 MemoryCaptures/
 UserSettings/
+
+# Ignore ProjectSettings, but keep version file for CI/CD
+ProjectSettings/*
+!ProjectSettings/ProjectVersion.txt

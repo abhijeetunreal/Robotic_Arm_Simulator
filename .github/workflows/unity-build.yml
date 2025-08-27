@@ -1,29 +1,28 @@
-name: Unity Build
-
-on:
-  workflow_dispatch: # run manually for now
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 🔹 Activates Unity Personal using your Unity ID credentials
+      - name: Read Unity Version
+        id: unityVersion
+        run: |
+          version=$(grep "m_EditorVersion:" ProjectSettings/ProjectVersion.txt | awk '{print $2}')
+          echo "unityVersion=$version" >> $GITHUB_OUTPUT
+
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
         with:
-          unityVersion: 2022.3.18f1
+          unityVersion: ${{ steps.unityVersion.outputs.unityVersion }}
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
 
-      # 🔹 Build for Windows (change platform if needed)
       - name: Build project
         uses: game-ci/unity-builder@v4
         with:
-          unityVersion: 2022.3.18f1
+          unityVersion: ${{ steps.unityVersion.outputs.unityVersion }}
           targetPlatform: StandaloneWindows64
 
       - name: Upload build
