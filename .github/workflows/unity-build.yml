@@ -1,32 +1,28 @@
+name: Unity Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
 jobs:
   build:
+    name: Build project
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Read Unity Version
-        id: unityVersion
+      - name: Get Unity Version
+        id: get-unity-version
         run: |
-          version=$(grep "m_EditorVersion:" ProjectSettings/ProjectVersion.txt | awk '{print $2}')
-          echo "unityVersion=$version" >> $GITHUB_OUTPUT
-
-      - name: Activate Unity
-        uses: game-ci/unity-activate@v2
-        with:
-          unityVersion: ${{ steps.unityVersion.outputs.unityVersion }}
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          version=$(grep m_EditorVersion ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Build project
         uses: game-ci/unity-builder@v4
         with:
-          unityVersion: ${{ steps.unityVersion.outputs.unityVersion }}
-          targetPlatform: StandaloneWindows64
-
-      - name: Upload build
-        uses: actions/upload-artifact@v4
-        with:
-          name: GameBuild
-          path: build
+          unityVersion: ${{ steps.get-unity-version.outputs.version }}
+          targetPlatform: StandaloneWindows64 # Change to WebGL, Android, iOS etc.
