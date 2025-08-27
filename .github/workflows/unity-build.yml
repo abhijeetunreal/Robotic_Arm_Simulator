@@ -1,51 +1,35 @@
-# A workflow to automatically build your Unity project
 name: Unity Build
 
-# Controls when the action will run
 on:
-  # Triggers the workflow on push events for the "main" branch
   push:
     branches: [ "main" ]
-  
-  # Triggers the workflow on pull requests targeting the "main" branch
   pull_request:
     branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     
     steps:
-      # 1. Checkout the repository to the runner
       - name: Checkout project
         uses: actions/checkout@v4
 
-      # 2. Automatically get the Unity version from the project settings
       - name: Get Unity Version
         id: get-unity-version
         run: |
           version=$(grep "^m_EditorVersion:" ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      # 3. Perform the build using GameCI's builder action
       - name: Unity - Build
         uses: game-ci/unity-builder@v4
         env:
-          # Your Unity credentials for a fresh activation on the runner
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          # The Unity version to use for the build
           unityVersion: ${{ steps.get-unity-version.outputs.version }}
-          
-          # The platform to build for (WebGL for web builds)
           targetPlatform: WebGL
 
-      # 4. (Optional) Upload the build artifact so you can download it
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
