@@ -1,7 +1,7 @@
 name: Unity Auto Activation Build
 
 on:
-  workflow_dispatch: # lets you run manually
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,16 +13,17 @@ jobs:
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
         with:
-          unityVersion: 2022.3.18f1  # 🔹 Replace with your version from ProjectSettings/ProjectVersion.txt
+          unityVersion: 2022.3.18f1   # 🔹 replace with your ProjectVersion.txt
+          customImage: unityci/editor:ubuntu-2022.3.18f1-base-1
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }} # only if Pro
 
       - name: Build project
         uses: game-ci/unity-builder@v4
         with:
-          unityVersion: 2022.3.18f1   # 🔹 Must match above
+          unityVersion: 2022.3.18f1
+          customImage: unityci/editor:ubuntu-2022.3.18f1-base-1
           targetPlatform: StandaloneWindows64
           buildName: MyGame
           buildPath: build
