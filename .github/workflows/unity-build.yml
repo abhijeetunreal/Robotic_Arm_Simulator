@@ -29,14 +29,10 @@ jobs:
       - name: Unity - Build
         uses: game-ci/unity-builder@v4
         env:
-          # The single secret containing your .ulf license file content
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          # The Unity version to use for the build
-          unityVersion: ${{ steps.get-unity-version.outputs.version }}
-          
-          # The platform to build for is now WebGL
-          targetPlatform: WebGL
+          targetPlatform: WebGL # Or your desired platform
+          # ... other options
 
       # 4. (Optional) Upload the build artifact so you can download it
       - name: Upload Build Artifact
