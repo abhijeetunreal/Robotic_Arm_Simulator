@@ -1,34 +1,25 @@
-# File: .github/workflows/unity-build.yml
-
+# A workflow to automatically build your Unity project
 name: Unity Build
 
+# Controls when the action will run
 on:
+  # Triggers the workflow on push events for the "main" branch
   push:
     branches: [ "main" ]
+  
+  # Triggers the workflow on pull requests targeting the "main" branch
   pull_request:
     branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     
     steps:
-
-
-
-      # ADD THIS DEBUGGING STEP
-      - name: 🤫 Check if Secret is Loaded
-        run: |
-          if [ -z "${{ secrets.UNITY_LICENSE }}" ]; then
-            echo "❌ ERROR: UNITY_LICENSE secret is NOT set or is empty!"
-            exit 1
-          else
-            echo "✅ SUCCESS: UNITY_LICENSE secret is loaded."
-          fi
-
-      
-
       # 1. Checkout the repository to the runner
       - name: Checkout project
         uses: actions/checkout@v4
@@ -44,19 +35,19 @@ jobs:
       - name: Unity - Build
         uses: game-ci/unity-builder@v4
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          # Your Unity credentials for a fresh activation on the runner
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          targetPlatform: WebGL # Or your desired platform
-          # ... other options
+          # The Unity version to use for the build
+          unityVersion: ${{ steps.get-unity-version.outputs.version }}
+          
+          # The platform to build for (WebGL for web builds)
+          targetPlatform: WebGL
 
       # 4. (Optional) Upload the build artifact so you can download it
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          # Updated artifact name for the web build
           name: build-WebGL
-          # Updated path to the WebGL build folder
           path: build/WebGL
-
-
-      
