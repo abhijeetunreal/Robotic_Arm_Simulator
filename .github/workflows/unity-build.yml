@@ -1,51 +1,26 @@
-name: Unity Build
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout the repository
       - uses: actions/checkout@v3
 
-      # 2. Get Unity version from ProjectSettings/ProjectVersion.txt
       - name: Get Unity Version
         id: get-unity-version
         run: |
           version=$(grep "^m_EditorVersion:" ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      # 3. Request Unity activation (only needed once to generate .alf file)
-      - name: Unity - Request Activation File
-        uses: game-ci/unity-request-activation-file@v2
-        with:
-          unityVersion: ${{ steps.get-unity-version.outputs.version }}
-      # This step will output: Unity_v20XX.x.alf (activation file)
-
-      # 4. Upload activation file as artifact so you can download it
-      - name: Upload activation file
-        uses: actions/upload-artifact@v3
-        with:
-          name: Unity_ActivationFile
-          path: Unity_*.alf
-
-      # 5. If UNITY_LICENSE secret is available, activate Unity
       - name: Unity - Activate
-        if: env.UNITY_LICENSE != ''
         uses: game-ci/unity-activate@v2
         with:
           unityVersion: ${{ steps.get-unity-version.outputs.version }}
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
 
-      # 6. Build Unity project
       - name: Unity - Build
         uses: game-ci/unity-builder@v4
         with:
           unityVersion: ${{ steps.get-unity-version.outputs.version }}
-          targetPlatform: Android # change to StandaloneWindows/IOS/etc.
+          targetPlatform: Android
