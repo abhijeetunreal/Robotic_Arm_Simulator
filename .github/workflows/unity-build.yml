@@ -1,3 +1,5 @@
+# File: .github/workflows/unity-build.yml
+
 name: Unity Build
 
 on:
@@ -10,33 +12,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      # 1. Checkout project
+      # 1. Checkout the repository to the runner
       - name: Checkout project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2. Get Unity Version from ProjectSettings/ProjectVersion.txt
+      # 2. Automatically get the Unity version from the project settings
       - name: Get Unity Version
         id: get-unity-version
         run: |
           version=$(grep "^m_EditorVersion:" ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
           echo "version=$version" >> $GITHUB_OUTPUT
 
-      # 3. Build the project
-      # This single step now handles activation and building
+      # 3. Perform the build using GameCI's builder action
       - name: Unity - Build
         uses: game-ci/unity-builder@v4
         env:
+          # The single secret containing your .ulf license file content
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          # The Unity version to use for the build
           unityVersion: ${{ steps.get-unity-version.outputs.version }}
-          targetPlatform: Android # Or whatever platform you need
+          
+          # The platform to build for is now WebGL
+          targetPlatform: WebGL
 
-      # (Optional) 4. Upload build artifact
+      # 4. (Optional) Upload the build artifact so you can download it
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ steps.build.outputs.buildPath }}
-          path: ${{ steps.build.outputs.buildPath }}
+          # Updated artifact name for the web build
+          name: build-WebGL
+          # Updated path to the WebGL build folder
+          path: build/WebGL
