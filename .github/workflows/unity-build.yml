@@ -4,21 +4,35 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # 1. Detect Unity version from ProjectVersion.txt
       - name: Get Unity Version
         id: get-unity-version
         run: |
           version=$(grep "^m_EditorVersion:" ProjectSettings/ProjectVersion.txt | sed 's/m_EditorVersion: //')
           echo "version=$version" >> $GITHUB_OUTPUT
 
+      # 2. Request activation file (ONLY first time)
+      - name: Unity - Request Activation File
+        uses: game-ci/unity-request-activation-file@v2
+        with:
+          unityVersion: ${{ steps.get-unity-version.outputs.version }}
+
+      - name: Upload activation file
+        uses: actions/upload-artifact@v3
+        with:
+          name: Unity_ActivationFile
+          path: Unity_*.alf
+
+      # 3. Activate (after you’ve uploaded UNITY_LICENSE secret)
       - name: Unity - Activate
+        if: env.UNITY_LICENSE != ''
         uses: game-ci/unity-activate@v2
         with:
           unityVersion: ${{ steps.get-unity-version.outputs.version }}
         env:
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
 
+      # 4. Build
       - name: Unity - Build
         uses: game-ci/unity-builder@v4
         with:
