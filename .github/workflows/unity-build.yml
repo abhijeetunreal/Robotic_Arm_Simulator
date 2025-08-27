@@ -1,35 +1,33 @@
-name: Unity Auto Activation Build
+name: Unity Build
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # run manually for now
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout project
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🔹 Activates Unity Personal using your Unity ID credentials
       - name: Activate Unity
         uses: game-ci/unity-activate@v2
         with:
-          unityVersion: 2022.3.18f1   # 🔹 replace with your ProjectVersion.txt
-          customImage: unityci/editor:ubuntu-2022.3.18f1-base-1
+          unityVersion: 2022.3.18f1
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
 
+      # 🔹 Build for Windows (change platform if needed)
       - name: Build project
         uses: game-ci/unity-builder@v4
         with:
           unityVersion: 2022.3.18f1
-          customImage: unityci/editor:ubuntu-2022.3.18f1-base-1
           targetPlatform: StandaloneWindows64
-          buildName: MyGame
-          buildPath: build
 
-      - name: Upload artifact
+      - name: Upload build
         uses: actions/upload-artifact@v4
         with:
-          name: MyGame-Windows
+          name: GameBuild
           path: build
