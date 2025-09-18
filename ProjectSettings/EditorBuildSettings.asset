@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/HexagonTunnel.unity
-    guid: 19900ddf9a228ba4a8fac64e0e3b71de
+    path: Assets/Scenes/RoboticCollector.unity
+    guid: 47b2e8b1a69180544aa70bae19374852
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
