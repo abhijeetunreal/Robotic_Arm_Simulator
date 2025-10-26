@@ -2,6 +2,10 @@
 
 A comprehensive guide to the hardware, firmware, software, and algorithms used in the project.
 
+![Alt text](https://raw.githubusercontent.com/abhijeetunreal/IMGDB/refs/heads/main/Portfolio/Phygital/airmouseVideo1.webp)
+
+![Alt text](https://raw.githubusercontent.com/abhijeetunreal/IMGDB/refs/heads/main/Portfolio/Phygital/airmouseVideo2.webp)
+
 ### Table of Contents
 * [1. Project Overview](#1-project-overview)
   * [1.1. Core Concept](#11-core-concept)
